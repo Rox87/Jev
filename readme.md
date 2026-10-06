@@ -48,6 +48,8 @@ Com as dependências instaladas e a variável de ambiente configurada, execute:
 python jev-lab.py
 ```
 
+## 🎯 O que cada variável faz:
+
 Cada uma dessas variáveis representa um tipo diferente de métrica ou julgamento estatístico:
 
 1. answers["is_urgent"]["noul"]
