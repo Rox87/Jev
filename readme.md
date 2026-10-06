@@ -1,92 +1,134 @@
-# Jev Lab: Classificador de Mensagens com OpenRouter API
+Aqui está o README.md reestruturado, com formatação padronizada, caminhos consistentes e documentação técnica detalhada das respostas da API:
 
-Esta é uma aplicação simples em Python que demonstra como utilizar a API **Decisions** do [OpenRouter](https://openrouter.ai/). A aplicação usa o modelo `~typesafe/jev-latest` para analisar e classificar mensagens de suporte ao cliente de forma estruturada, facilitando a automação de fluxos de trabalho e roteamento de tickets.
+Markdown
+# Jev Lab: Classificador e Roteador Inteligente com OpenRouter API
 
-## 🚀 Visão Geral
+Aplicação em Python para triagem, roteamento e análise comportamental de mensagens de suporte utilizando a API **Decisions** da [OpenRouter](https://openrouter.ai/) com o modelo `typesafe/jev-latest`.
 
-O script [`jev-lab.py`](jev-lab.py) envia uma mensagem de exemplo (ex: *"Help! My payouts have been failing for 3 days."*) e faz perguntas predefinidas para a IA, exigindo respostas tipadas (não apenas texto livre):
+Diferente de chamadas convencionais de LLM que retornam texto livre ou JSONs arbitrários, o Jev entrega saídas estritamente tipadas e probabilidades calibradas, tornando o pipeline confiável para regras determinísticas e automação de tickets.
 
-1. **Urgência (`is_urgent`)**: Utiliza o tipo `noul` para retornar uma probabilidade (0 a 1) se a mensagem transmite urgência.
-2. **Departamento (`department`)**: Utiliza o tipo `choice` para determinar qual equipe (Cobrança, Técnica ou Vendas) deve tratar o caso, trazendo junto as distribuições de probabilidade de cada categoria.
-3. **Frustração (`frustration`)**: Utiliza o tipo `score` para avaliar o nível de frustração do cliente com base em critérios de estado emocional ("Calm", "Frustrated", "Very angry").
+---
 
-## 🛠️ Pré-requisitos
+## 📌 Funcionalidades Principais
 
-- Python 3.x
-- O script depende da biblioteca `requests` para realizar a comunicação HTTP.
+- **Detecção de Urgência (`noul`)**: Probabilidade calibrada de criticidade para priorização em fila.
+- **Roteamento de Departamento (`choice`)**: Classificação multiclasse com distribuição de certeza (*softmax*) entre equipes.
+- **Índice de Frustração (`score`)**: Métrica escalar contínua de atrito emocional para acionamento de retenção/supervisão.
+- **Interface Web (`Jev Edu`)**: Painel interativo construído em Flask para simulações e testes em tempo real.
 
-Você pode instalar a dependência necessária utilizando o pip:
+---
 
-```bash
-pip install requests
-```
-*(Nota: O arquivo `requirements.txt` cita `openrouter`, mas a implementação atual faz chamadas diretas à API REST via `requests`.)*
+## 🏗️ Estrutura do Projeto
 
-## ⚙️ Configuração
+```text
+├── edu/
+│   └── app.py              # Interface web interativa (Flask)
+├── scripts/
+│   └── jev-lab.py          # Script CLI de integração com a API Decisions
+├── requirements.txt        # Dependências do projeto
+└── README.md
+🛠️ Instalação e Configuração
+1. Clonar e preparar o ambiente
+Recomenda-se o uso de um ambiente virtual para isolar as dependências:
 
-Para executar o script, você precisa de uma chave de API válida do OpenRouter.
+Bash
+# Criar o ambiente virtual
+python -m venv .venv
 
-1. Cadastre-se ou faça login em [openrouter.ai](https://openrouter.ai/).
-2. Acesse a seção de chaves (Keys) e gere uma nova API Key.
-3. Exponha essa chave no seu ambiente de terminal.
+# Ativar no Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
 
-**Windows (PowerShell):**
-```powershell
-$env:OPENROUTER_API_KEY="sua_chave_de_api_aqui"
-```
+# Ativar no Linux/macOS
+source .venv/bin/activate
 
-**Linux/Mac:**
-```bash
-export OPENROUTER_API_KEY="sua_chave_de_api_aqui"
-```
+# Instalar dependências
+pip install -r requirements.txt
+Nota: Para executar apenas o script CLI (jev-lab.py), a biblioteca requests é suficiente (pip install requests). Para a interface web, instale a lista completa do requirements.txt.
 
-## ▶️ Como Executar
+2. Configurar a chave de API
+Obtenha uma chave em OpenRouter Keys e configure a variável de ambiente:
 
-Com as dependências instaladas e a variável de ambiente configurada, execute:
+Windows (PowerShell):
 
-```bash
-python jev-lab.py
-```
+PowerShell
+$env:OPENROUTER_API_KEY="sk-or-v1-..."
+Linux/macOS:
 
-## 🎯 O que cada variável faz:
+Bash
+export OPENROUTER_API_KEY="sk-or-v1-..."
+🚀 Execução
+Modo Linha de Comando (CLI)
+Analisa uma mensagem de teste e exibe as métricas calculadas diretamente no terminal:
 
-Cada uma dessas variáveis representa um tipo diferente de métrica ou julgamento estatístico:
+Bash
+python scripts/jev-lab.py
+Interface Web (Flask)
+Inicia o dashboard interativo:
+
+Bash
+python edu/app.py
+Acesse localmente em: http://127.0.0.1:5000.
+
+📊 Especificação das Respostas (answers)
+O endpoint /api/v1/alpha/decisions consolida as avaliações no objeto answers. Cada variável opera sob um modelo estatístico próprio:
 
 1. answers["is_urgent"]["noul"]
-Conceito: Avaliação binária ou de confirmação condicional (No / Yes ou Null/Odds-Underlying-Likelihood).
+Mecanismo: Avaliação de veredito binário (Null / Odds-Underlying-Likelihood).
 
-Significado: Na especificação do Jev, perguntas de presença/ausência (como "isto é urgente?") retornam um valor calibrado de probabilidade/log-odds ou uma indicação de veredito negativo/positivo (daí a sigla interna associada a noul / probabilidade não-nula).
+Tipo de Retorno: float (intervalo de 0.0 a 1.0).
 
-O que faz: Mede a certeza estatística (geralmente um valor escalar decimal entre 0.0 e 1.0, semelhante ao cancel_prob do seu código original) de que a interação precisa de atendimento prioritário/imediato.
+Aplicação: Avalia a probabilidade estatística de a demanda exigir atenção imediata.
 
-2. answers["department"]["choice"] e answers["department"]["probabilities"]
-Conceito: Classificação multiclasse (roteamento categórico).
+Python
+if answers["is_urgent"]["noul"] > 0.80:
+    ticket.set_priority("P1_CRITICAL")
+2. answers["department"]["choice"] & ["probabilities"]
+Mecanismo: Classificação categórica multiclasse.
 
-["choice"]: O rótulo ou departamento vencedor previsto pelo modelo (por exemplo: "billing", "support", "sales" ou "cancellation"). É a categoria com maior score após a distribuição probabilística.
+choice (string): Categoria com maior probabilidade estimada (ex.: "billing", "support", "sales").
 
-["probabilities"]: Um dicionário contendo a distribuição de probabilidade (softmax/calibrada) entre todas as opções cadastradas, por exemplo:
+probabilities (dict[string, float]): Vetor com a pontuação atribuída a cada opção disponível.
 
 JSON
 {
-  "billing": 0.82,
-  "support": 0.15,
-  "sales": 0.03
+  "choice": "billing",
+  "probabilities": {
+    "billing": 0.82,
+    "support": 0.15,
+    "sales": 0.05
+  }
 }
+Aplicação: Permite criar lógicas de contingência (fallback) baseadas na margem de confiança:
 
-Permite implementar regras de fallback (ex.: transferir para um humano se a probabilidade da classe vencedora for inferior a 0.60).
+Python
+top_choice = answers["department"]["choice"]
+confidence = answers["department"]["probabilities"][top_choice]
 
+if confidence < 0.60:
+    ticket.route_to("human_triage")
+else:
+    ticket.route_to(top_choice)
 3. answers["frustration"]["score"]
-Conceito: Regressão ou escala contínua de sentimento/atrito.
+Mecanismo: Regressão contínua de sentimento/atrito.
 
-Significado: Ao invés de uma escolha discreta, este campo mede o nível de insatisfação, irritação ou atrito percebido na mensagem do cliente.
+Tipo de Retorno: float (escala normalizada de 0.0 a 1.0).
 
-O que faz: Retorna um valor numérico contínuo (geralmente em uma escala de 0.0 a 1.0 ou 0 a 100). Um score elevado (ex.: > 0.75) serve de gatilho para acionar supervisores ou priorizar o ticket antes que haja churn/cancelamento.
+Aplicação: Identifica o tom emocional da mensagem para antecipar riscos de cancelamento (churn) ou acionar supervisores antes da primeira resposta humana:
 
-Resumo do Fluxo no Jev
-Essas variáveis funcionam em conjunto para roteamento inteligente de chamados e mensagens:
+Python
+if answers["frustration"]["score"] >= 0.75:
+    ticket.notify_supervisor(reason="Alto atrito detectado")
+🔄 Fluxo de Roteamento Integrado
+Plaintext
+Entrada (Mensagem)
+       │
+       ▼
+[OpenRouter Decisions API]
+       │
+       ├─► department.choice ────────► Fila de Destino (Financeiro, Suporte, Vendas)
+       ├─► is_urgent.noul    ────────► Nível de SLA (P1, P2, P3)
+       └─► frustration.score ────────► Tratamento VIP / Alerta de Retenção
 
-department define para onde a mensagem deve ir.
-
-is_urgent define a fila de prioridade do atendimento.
-
-frustration orienta o tom da abordagem ou o escalonamento para um atendente sênior.
+<FollowUp>
+Deseja incluir no README um exemplo completo do payload JSON de envio (`payload_questions`) demonstrando como declarar esses três tipos na requisição?
+</FollowUp>

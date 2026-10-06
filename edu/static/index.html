@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jev Edu | Orientador Vocacional IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <main class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🎓</span>
+                <h1>Jev Edu</h1>
+            </div>
+            <p class="subtitle">Seu orientador de carreira impulsionado por IA avançada</p>
+        </header>
+
+        <section class="input-section glass-panel">
+            <label for="profile-input">Descreva seu background, paixões e objetivos profissionais:</label>
+            <textarea id="profile-input" rows="5" placeholder="Exemplo: Gosto muito de analisar dados e tendências, me formei em administração mas sinto que falta conhecimento técnico para as vagas de cientista de dados que tenho visto..."></textarea>
+            
+            <button id="analyze-btn" class="primary-btn">
+                <span class="btn-text">Analisar Perfil</span>
+                <span class="btn-icon">✨</span>
+            </button>
+        </section>
+
+        <section id="loading-state" class="hidden">
+            <div class="spinner"></div>
+            <p>Jev está processando seu perfil...</p>
+        </section>
+
+        <section id="results-section" class="hidden">
+            <h2 class="results-title">Resultados da Análise</h2>
+            
+            <div class="results-grid">
+                <!-- Card de Área -->
+                <div class="result-card glass-panel highlight-card">
+                    <div class="card-header">
+                        <span class="icon">🎯</span>
+                        <h3>Área Recomendada</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4 id="res-area-main">Tecnologia</h4>
+                        <div class="prob-list" id="res-area-probs">
+                            <!-- Inserido via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Pós -->
+                <div class="result-card glass-panel">
+                    <div class="card-header">
+                        <span class="icon">📚</span>
+                        <h3>Necessidade de Pós-Graduação</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 100 50" class="gauge">
+                                <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" />
+                                <path id="postgrad-gauge" class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-dasharray="125.6" stroke-dashoffset="125.6" />
+                            </svg>
+                            <span id="res-postgrad-pct" class="gauge-value">0%</span>
+                        </div>
+                        <p id="res-postgrad-text" class="recommendation-text"></p>
+                    </div>
+                </div>
+
+                <!-- Card de Preparo -->
+                <div class="result-card glass-panel">
+                    <div class="card-header">
+                        <span class="icon">🚀</span>
+                        <h3>Nível de Preparo Atual</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress-bar-container">
+                            <div id="readiness-bar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        <span id="res-readiness-val" class="progress-value">0.00</span>
+                        <p id="res-readiness-text" class="recommendation-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div id="error-message" class="hidden glass-panel error-panel">
+            <!-- Mensagem de erro -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
