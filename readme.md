@@ -48,14 +48,42 @@ Com as dependências instaladas e a variável de ambiente configurada, execute:
 python jev-lab.py
 ```
 
-### Exemplo de Saída Esperada
+Cada uma dessas variáveis representa um tipo diferente de métrica ou julgamento estatístico:
 
-No terminal, você verá os resultados da análise. O comportamento esperado para a frase de testes sobre pagamentos falhando deve ser parecido com:
+1. answers["is_urgent"]["noul"]
+Conceito: Avaliação binária ou de confirmação condicional (No / Yes ou Null/Odds-Underlying-Likelihood).
 
-```text
-0.95
-billing {'technical': 0.12, 'billing': 0.88, 'sales': 0}
-1.04
-```
+Significado: Na especificação do Jev, perguntas de presença/ausência (como "isto é urgente?") retornam um valor calibrado de probabilidade/log-odds ou uma indicação de veredito negativo/positivo (daí a sigla interna associada a noul / probabilidade não-nula).
 
-Abaixo dos `prints`, o código ainda possui um exemplo básico de roteamento que verifica se a probabilidade de urgência é maior que 80% (`> 0.8`) e se o departamento é o de cobrança (`"billing"`) para realizar uma possível escalação.
+O que faz: Mede a certeza estatística (geralmente um valor escalar decimal entre 0.0 e 1.0, semelhante ao cancel_prob do seu código original) de que a interação precisa de atendimento prioritário/imediato.
+
+2. answers["department"]["choice"] e answers["department"]["probabilities"]
+Conceito: Classificação multiclasse (roteamento categórico).
+
+["choice"]: O rótulo ou departamento vencedor previsto pelo modelo (por exemplo: "billing", "support", "sales" ou "cancellation"). É a categoria com maior score após a distribuição probabilística.
+
+["probabilities"]: Um dicionário contendo a distribuição de probabilidade (softmax/calibrada) entre todas as opções cadastradas, por exemplo:
+
+JSON
+{
+  "billing": 0.82,
+  "support": 0.15,
+  "sales": 0.03
+}
+Permite implementar regras de fallback (ex.: transferir para um humano se a probabilidade da classe vencedora for inferior a 0.60).
+
+3. answers["frustration"]["score"]
+Conceito: Regressão ou escala contínua de sentimento/atrito.
+
+Significado: Ao invés de uma escolha discreta, este campo mede o nível de insatisfação, irritação ou atrito percebido na mensagem do cliente.
+
+O que faz: Retorna um valor numérico contínuo (geralmente em uma escala de 0.0 a 1.0 ou 0 a 100). Um score elevado (ex.: > 0.75) serve de gatilho para acionar supervisores ou priorizar o ticket antes que haja churn/cancelamento.
+
+Resumo do Fluxo no Jev
+Essas variáveis funcionam em conjunto para roteamento inteligente de chamados e mensagens:
+
+department define para onde a mensagem deve ir.
+
+is_urgent define a fila de prioridade do atendimento.
+
+frustration orienta o tom da abordagem ou o escalonamento para um atendente sênior.
