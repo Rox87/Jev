@@ -70,6 +70,7 @@ JSON
   "support": 0.15,
   "sales": 0.03
 }
+
 Permite implementar regras de fallback (ex.: transferir para um humano se a probabilidade da classe vencedora for inferior a 0.60).
 
 3. answers["frustration"]["score"]
