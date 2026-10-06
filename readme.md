@@ -1,7 +1,7 @@
-Aqui está o README.md reestruturado, com formatação padronizada, caminhos consistentes e documentação técnica detalhada das respostas da API:
 
-Markdown
-# Jev Lab: Classificador e Roteador Inteligente com OpenRouter API
+
+
+# Jev: Classificador e Roteador Inteligente com OpenRouter API - caso de uso: orientação vocacional
 
 Aplicação em Python para triagem, roteamento e análise comportamental de mensagens de suporte utilizando a API **Decisions** da [OpenRouter](https://openrouter.ai/) com o modelo `typesafe/jev-latest`.
 
