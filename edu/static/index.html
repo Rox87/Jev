@@ -1,102 +1,392 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jev Edu | Orientador Vocacional IA</title>
+    <title>Jev Edu | Orientador Vocacional Inteligente</title>
+    <meta name="description" content="Plataforma de orientação vocacional inteligente com diagnóstico preditivo de áreas de carreira, necessidade de pós-graduação e prontidão de mercado.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="background-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <!-- Ambient glowing backgrounds for depth -->
+    <div class="ambient-glow" aria-hidden="true">
+        <div class="glow-orb orb-primary"></div>
+        <div class="glow-orb orb-secondary"></div>
+        <div class="glow-orb orb-accent"></div>
+        <div class="glow-grid"></div>
     </div>
 
-    <main class="container">
-        <header>
-            <div class="logo">
-                <span class="logo-icon">🎓</span>
-                <h1>Jev Edu</h1>
-            </div>
-            <p class="subtitle">Seu orientador de carreira impulsionado por IA avançada</p>
-        </header>
-
-        <section class="input-section glass-panel">
-            <label for="profile-input">Descreva seu background, paixões e objetivos profissionais:</label>
-            <textarea id="profile-input" rows="5" placeholder="Exemplo: Gosto muito de analisar dados e tendências, me formei em administração mas sinto que falta conhecimento técnico para as vagas de cientista de dados que tenho visto..."></textarea>
-            
-            <button id="analyze-btn" class="primary-btn">
-                <span class="btn-text">Analisar Perfil</span>
-                <span class="btn-icon">✨</span>
-            </button>
-        </section>
-
-        <section id="loading-state" class="hidden">
-            <div class="spinner"></div>
-            <p>Jev está processando seu perfil...</p>
-        </section>
-
-        <section id="results-section" class="hidden">
-            <h2 class="results-title">Resultados da Análise</h2>
-            
-            <div class="results-grid">
-                <!-- Card de Área -->
-                <div class="result-card glass-panel highlight-card">
-                    <div class="card-header">
-                        <span class="icon">🎯</span>
-                        <h3>Área Recomendada</h3>
-                    </div>
-                    <div class="card-body">
-                        <h4 id="res-area-main">Tecnologia</h4>
-                        <div class="prob-list" id="res-area-probs">
-                            <!-- Inserido via JS -->
-                        </div>
-                    </div>
+    <!-- Main App Container -->
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar glass-surface">
+            <div class="nav-brand">
+                <div class="brand-badge">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
                 </div>
-
-                <!-- Card de Pós -->
-                <div class="result-card glass-panel">
-                    <div class="card-header">
-                        <span class="icon">📚</span>
-                        <h3>Necessidade de Pós-Graduação</h3>
+                <div class="brand-info">
+                    <div class="brand-title-row">
+                        <span class="brand-title">Jev Edu</span>
+                        <span class="version-tag">IA Decisions 2.0</span>
                     </div>
-                    <div class="card-body">
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 100 50" class="gauge">
-                                <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" />
-                                <path id="postgrad-gauge" class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-dasharray="125.6" stroke-dashoffset="125.6" />
+                    <span class="brand-model">~typesafe/jev-latest</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="theme-switch-wrapper">
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Alternar tema entre claro e escuro" title="Alternar tema (Claro / Escuro)">
+                        <div class="theme-icon-container">
+                            <!-- Sun Icon -->
+                            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                             </svg>
-                            <span id="res-postgrad-pct" class="gauge-value">0%</span>
+                            <!-- Moon Icon -->
+                            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
                         </div>
-                        <p id="res-postgrad-text" class="recommendation-text"></p>
+                        <span class="theme-label" id="theme-text">Escuro</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Header -->
+            <header class="hero-header">
+                <div class="hero-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Análise Vocacional Preditiva</span>
+                </div>
+                <h1 class="hero-title">Descubra sua Rota de Carreira com Precisão</h1>
+                <p class="hero-subtitle">
+                    Avalie o alinhamento do seu perfil profissional, a real necessidade de especialização acadêmica e o seu índice de prontidão para o mercado de trabalho.
+                </p>
+            </header>
+
+            <!-- Input Card -->
+            <section class="card input-card glass-surface" aria-labelledby="input-title">
+                <div class="card-header">
+                    <div class="section-heading">
+                        <span class="heading-icon">✍️</span>
+                        <div>
+                            <h2 id="input-title" class="section-title">Seu Histórico e Objetivos</h2>
+                            <p class="section-description">Descreva sua trajetória atual, o que você domina e para onde deseja migrar.</p>
+                        </div>
+                    </div>
+                    <div class="char-count-wrapper">
+                        <span id="char-counter" class="mono-badge">0 caracteres</span>
                     </div>
                 </div>
 
-                <!-- Card de Preparo -->
-                <div class="result-card glass-panel">
-                    <div class="card-header">
-                        <span class="icon">🚀</span>
-                        <h3>Nível de Preparo Atual</h3>
+                <!-- Example Chips -->
+                <div class="presets-container">
+                    <span class="presets-label">Testar perfis de exemplo:</span>
+                    <div class="presets-chips">
+                        <button type="button" class="preset-chip" data-preset="tech">
+                            <span class="chip-icon">💻</span> Dev para IA & MLOps
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="data">
+                            <span class="chip-icon">📊</span> Gestor para Data Science
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="design">
+                            <span class="chip-icon">🎨</span> Gráfico para UX/Product
+                        </button>
+                        <button type="button" class="preset-chip" data-preset="health">
+                            <span class="chip-icon">🩺</span> Enfermagem para Saúde Digital
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <div class="progress-bar-container">
-                            <div id="readiness-bar" class="progress-bar" style="width: 0%"></div>
-                        </div>
-                        <span id="res-readiness-val" class="progress-value">0.00</span>
-                        <p id="res-readiness-text" class="recommendation-text"></p>
+                </div>
+
+                <!-- Profile Textarea -->
+                <div class="textarea-wrapper">
+                    <textarea 
+                        id="profile-input" 
+                        rows="5" 
+                        placeholder="Ex: Trabalho há 3 anos com análise de processos em uma empresa de logística. Tenho facilidade com raciocínio analítico e SQL básico, mas quero migrar para Ciência de Dados ou Engenharia de Analytics. Não tenho certeza se preciso fazer um mestrado agora ou focar em portfólio prático..."
+                        aria-label="Descrição do seu perfil profissional e objetivos"></textarea>
+                </div>
+
+                <!-- Input Footer Controls -->
+                <div class="input-card-footer">
+                    <div class="footer-hints">
+                        <span class="shortcut-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> para analisar</span>
+                    </div>
+                    <div class="footer-actions">
+                        <button type="button" id="clear-btn" class="secondary-btn" title="Limpar campo de texto">
+                            Limpar
+                        </button>
+                        <button type="button" id="analyze-btn" class="primary-btn">
+                            <span class="btn-text">Analisar Perfil</span>
+                            <span class="btn-spinner hidden" aria-hidden="true"></span>
+                            <svg class="btn-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <section id="loading-state" class="card loading-card glass-surface hidden" aria-live="polite">
+                <div class="loading-visual">
+                    <div class="radar-spinner">
+                        <div class="radar-circle"></div>
+                        <div class="radar-scan"></div>
+                        <span class="radar-core-icon">🎓</span>
+                    </div>
+                </div>
+                <div class="loading-details">
+                    <h3 class="loading-title" id="loading-status-text">Processando seu histórico profissional...</h3>
+                    <p class="loading-subtitle">O modelo Jev Decisions está calculando as probabilidades e analisando critérios de pós-graduação.</p>
+                    <div class="loading-progress-bar">
+                        <div class="loading-progress-fill"></div>
+                    </div>
+                    <div class="loading-steps">
+                        <span class="step-pill active" id="step-1">1. Vetorização</span>
+                        <span class="step-pill" id="step-2">2. Áreas Vocacionais</span>
+                        <span class="step-pill" id="step-3">3. Métricas Jev</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error State -->
+            <div id="error-message" class="card error-card glass-surface hidden" role="alert">
+                <div class="error-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div class="error-content">
+                    <h4 class="error-title">Não foi possível concluir a análise</h4>
+                    <p id="error-text" class="error-text">Ocorreu um erro ao comunicar com a API do servidor.</p>
+                    <div class="error-actions" id="error-actions-box">
+                        <button type="button" id="use-mock-btn" class="mock-btn">
+                            ⚡ Usar Simulação Demonstrativa (Offline)
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <div id="error-message" class="hidden glass-panel error-panel">
-            <!-- Mensagem de erro -->
-        </div>
-    </main>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-container hidden" aria-labelledby="results-title">
+                <!-- Results Header Bar -->
+                <div class="results-top-bar glass-surface">
+                    <div class="results-status">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <h2 id="results-title" class="results-main-title">Diagnóstico Vocacional Concluído</h2>
+                            <p class="results-timestamp" id="results-timestamp">Gerado agora via Jev Decisions</p>
+                        </div>
+                    </div>
+                    <div class="results-actions">
+                        <button type="button" id="copy-summary-btn" class="secondary-btn action-sm-btn" title="Copiar diagnóstico para a área de transferência">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-svg">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span>Copiar Relatório</span>
+                        </button>
+                        <button type="button" id="new-analysis-btn" class="secondary-btn action-sm-btn" title="Iniciar nova consulta">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-svg">
+                                <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                                <path d="M21 3v5h-5"></path>
+                                <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                                <path d="M3 21v-5h5"></path>
+                            </svg>
+                            <span>Nova Consulta</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 Pillars Grid -->
+                <div class="results-grid">
+                    <!-- Card 1: Carreira Recomendada -->
+                    <div class="result-card glass-surface card-highlight" id="card-career">
+                        <div class="result-card-header">
+                            <div class="metric-label-group">
+                                <span class="metric-badge">Métrica: Choice</span>
+                                <h3 class="metric-title">Área Vocacional Recomendada</h3>
+                            </div>
+                            <div class="area-badge-icon" id="res-area-icon">🎯</div>
+                        </div>
+
+                        <div class="result-card-body">
+                            <div class="career-focus-banner">
+                                <span class="focus-lead">Direcionamento Principal:</span>
+                                <h4 id="res-area-main" class="career-main-title">Tecnologia</h4>
+                                <span class="career-match-pill" id="res-area-confidence">Alta Compatibilidade</span>
+                            </div>
+
+                            <div class="prob-distribution">
+                                <div class="distribution-header">
+                                    <span class="sub-label">Distribuição de Probabilidades</span>
+                                    <span class="sub-label-dim">Classificação Jev</span>
+                                </div>
+                                <div class="prob-list" id="res-area-probs">
+                                    <!-- Dynamic items rendered via script.js -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Necessidade de Pós-Graduação (Noul) -->
+                    <div class="result-card glass-surface" id="card-postgrad">
+                        <div class="result-card-header">
+                            <div class="metric-label-group">
+                                <span class="metric-badge">Métrica: Noul (0 - 1)</span>
+                                <h3 class="metric-title">Necessidade de Pós-Graduação</h3>
+                            </div>
+                            <div class="metric-icon-box">📚</div>
+                        </div>
+
+                        <div class="result-card-body align-center">
+                            <!-- High-Precision Gauge -->
+                            <div class="gauge-card-wrapper">
+                                <div class="gauge-box">
+                                    <svg viewBox="0 0 200 115" class="precision-gauge" aria-hidden="true">
+                                        <!-- Gradient Definition -->
+                                        <defs>
+                                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#10b981" />
+                                                <stop offset="50%" stop-color="#f59e0b" />
+                                                <stop offset="100%" stop-color="#ef4444" />
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- Background Arc -->
+                                        <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" />
+                                        <!-- Progress Arc (circumference approx 251.3) -->
+                                        <path id="postgrad-gauge" class="gauge-indicator" d="M 20 100 A 80 80 0 0 1 180 100" />
+                                    </svg>
+                                    <div class="gauge-center-stat">
+                                        <span id="res-postgrad-pct" class="gauge-percentage-number mono-font">0%</span>
+                                        <span id="res-postgrad-badge" class="level-indicator-pill">Calculando</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-box">
+                                <p id="res-postgrad-text" class="recommendation-narrative">
+                                    Avaliando relevância de mestrado, pós ou especialização...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Nível de Prontidão (Score) -->
+                    <div class="result-card glass-surface" id="card-readiness">
+                        <div class="result-card-header">
+                            <div class="metric-label-group">
+                                <span class="metric-badge">Métrica: Score (0.00 - 1.00)</span>
+                                <h3 class="metric-title">Prontidão para o Mercado</h3>
+                            </div>
+                            <div class="metric-icon-box">🚀</div>
+                        </div>
+
+                        <div class="result-card-body align-center">
+                            <div class="score-display-wrapper">
+                                <div class="score-number-row">
+                                    <span id="res-readiness-val" class="score-number mono-font">0.00</span>
+                                    <span class="score-max mono-font">/ 1.00</span>
+                                </div>
+                                <span id="res-readiness-badge" class="level-indicator-pill readiness-pill">Avaliando</span>
+                            </div>
+
+                            <!-- Stepped Progress Bar -->
+                            <div class="progress-bar-module">
+                                <div class="progress-track">
+                                    <div id="readiness-bar" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <div class="progress-labels">
+                                    <span>Transição Inicial</span>
+                                    <span>Intermediário</span>
+                                    <span>Mercado Pronto</span>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-box">
+                                <p id="res-readiness-text" class="recommendation-narrative">
+                                    Calculando alinhamento prático de competências...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Plano de Ação Estratégico -->
+                <div class="card strategic-roadmap glass-surface">
+                    <div class="roadmap-header">
+                        <div class="roadmap-title-row">
+                            <span class="roadmap-icon">🧭</span>
+                            <div>
+                                <h3 class="roadmap-title">Plano de Ação Estratégico Recomendado</h3>
+                                <p class="roadmap-subtitle">Diretrizes sintetizadas pela IA para acelerar sua trajetória profissional</p>
+                            </div>
+                        </div>
+                        <span class="roadmap-tag">Roadmap Jev</span>
+                    </div>
+                    <div class="roadmap-grid" id="roadmap-items">
+                        <div class="roadmap-step">
+                            <div class="step-number">01</div>
+                            <div class="step-content">
+                                <h4 class="step-title" id="action-title-1">Foco de Aprendizado Imediato</h4>
+                                <p class="step-text" id="action-desc-1">Aprofunde-se nas ferramentas nucleares da sua área vocacional prioritária.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-step">
+                            <div class="step-number">02</div>
+                            <div class="step-content">
+                                <h4 class="step-title" id="action-title-2">Estratégia de Especialização</h4>
+                                <p class="step-text" id="action-desc-2">Equilibre formações práticas com títulos formais conforme o índice de pós-graduação indicado.</p>
+                            </div>
+                        </div>
+                        <div class="roadmap-step">
+                            <div class="step-number">03</div>
+                            <div class="step-content">
+                                <h4 class="step-title" id="action-title-3">Posicionamento de Mercado</h4>
+                                <p class="step-text" id="action-desc-3">Construa evidências concretas de entrega alinhadas ao seu nível de preparo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-inner">
+                <p>Jev Edu &copy; 2026 &bull; Impulsionado pelo modelo <code>~typesafe/jev-latest</code> via OpenRouter Decisions API</p>
+                <div class="footer-links">
+                    <span class="footer-badge">UI/UX Redesign &bull; Light & Dark Themes</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast-notification" class="toast-box hidden" role="status" aria-live="polite">
+        <div class="toast-icon">✓</div>
+        <span id="toast-message" class="toast-text">Notificação</span>
+    </div>
 
     <script src="script.js"></script>
 </body>
